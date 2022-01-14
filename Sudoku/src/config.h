@@ -1,1 +1,11 @@
 #pragma once
+
+#define GAME_NAME "Êý¶À"
+
+#define GRID_SIZE 60
+#define GRID_COUNT_SINGLE 9
+#define GRID_NUM_MAX 9
+#define GRID_BGCOLOR_DEFAULT 0xAA00AA
+#define GRID_BGCOLOR_HOVER 0xFFFF55
+#define GRID_BGCOLOR_CLICKED 0x00AA00
+#define GRID_COLOR_TEXT 0

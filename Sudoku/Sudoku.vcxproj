@@ -141,10 +141,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\Sudoku.cpp" />
+    <ClCompile Include="src\Widget\SquareGrid.cpp" />
     <ClCompile Include="src\Widget\Win.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="src\config.h" />
+    <ClInclude Include="src\Sudoku.h" />
+    <ClInclude Include="src\Timer.hpp" />
+    <ClInclude Include="src\Widget\SquareGrid.h" />
     <ClInclude Include="src\Widget\Win.h" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +158,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\Assets\logo-bit.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\README.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
