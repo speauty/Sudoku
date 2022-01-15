@@ -1,4 +1,5 @@
 #include "Sudoku.h"
+#include <vector>
 
 void Sudoku::InitDataMap()
 {
@@ -83,12 +84,12 @@ void Sudoku::RenderGridRect(const SqureCell& cell, unsigned int bgColor) const
 
 void Sudoku::RenderGridVal(const SqureCell& cell) const
 {
-	if (m_State.process != ProcessFlags::PF_PLAY) return;
-	SetGridTextStyle();
-	WCHAR tmp[2] = _T("");
-	if (cell.val) swprintf_s(tmp, _T("%d"), cell.val);
-	outtextxy(cell.position.AxisX + (GRID_SIZE - 20) / 2, cell.position.AxisY + (GRID_SIZE - 40) / 2, tmp);
-
+	if (m_State.process == ProcessFlags::PF_PLAY || m_State.process == ProcessFlags::PF_FINISH) {
+		SetGridTextStyle();
+		WCHAR tmp[2] = _T("");
+		if (cell.val) swprintf_s(tmp, _T("%d"), cell.val);
+		outtextxy(cell.position.AxisX + (GRID_SIZE - 20) / 2, cell.position.AxisY + (GRID_SIZE - 40) / 2, tmp);
+	}
 }
 
 void Sudoku::RenderSpecialLine() const
@@ -98,6 +99,20 @@ void Sudoku::RenderSpecialLine() const
 	line(6 * GRID_SIZE, 0, 6 * GRID_SIZE, GRID_COUNT_SINGLE * GRID_SIZE);
 	line(0, 3 * GRID_SIZE, GRID_COUNT_SINGLE * GRID_SIZE, 3 * GRID_SIZE);
 	line(0, 6 * GRID_SIZE, GRID_COUNT_SINGLE * GRID_SIZE, 6 * GRID_SIZE);
+}
+
+void Sudoku::RenderResultPanel()
+{
+	
+	if (m_State.process == ProcessFlags::PF_FINISH) {
+		RECT textBlockRect = { 120, 240, 420, 280 };
+		settextcolor(COLOR_TEXT_BLOCK);
+		if (m_State.flagSuccess) {
+			drawtext(_T("³É¹¦"), &textBlockRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+		} else {
+			drawtext(_T("Ê§°Ü"), &textBlockRect, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
+		}
+	}
 }
 
 Sudoku::Sudoku()
@@ -113,6 +128,71 @@ Sudoku::~Sudoku()
 	closegraph();
 }
 
+void Sudoku::Checker()
+{
+	bool flag = true;
+	if (m_State.process != ProcessFlags::PF_PLAY) return;
+	static unsigned short log = 0;
+
+	if (Timer::Check(3000, 1)) {
+		for (unsigned int y = 0; y < GRID_COUNT_SINGLE; y++) {
+			for (unsigned int x = 0; x < GRID_COUNT_SINGLE; x++) {
+				if (!m_DataMap[y][x].val) flag = false;
+			}
+		}
+		if (flag) {
+			log++;
+			if (log >= 3) m_State.process = ProcessFlags::PF_FINISH;
+		}
+	}
+	
+
+	for (unsigned int y = 0; y < GRID_COUNT_SINGLE; y++) {
+		std::vector<bool> tmp = { false, false, false, false, false, false, false, false, false };
+		for (unsigned int x = 0; x < GRID_COUNT_SINGLE; x++) {
+			if (m_DataMap[y][x].val) tmp[m_DataMap[y][x].val - 1] = true;
+		}
+		std::vector<bool>::iterator tmpIt;
+		tmpIt = std::unique(tmp.begin(), tmp.end());
+		tmp.resize(std::distance(tmp.begin(), tmpIt));
+		if (!(tmp.size() == 1 && tmp[0] == true)) return;
+	}
+
+	for (unsigned int y = 0; y < GRID_COUNT_SINGLE; y++) {
+		std::vector<bool> tmp = { false, false, false, false, false, false, false, false, false };
+		for (unsigned int x = 0; x < GRID_COUNT_SINGLE; x++) {
+			if (m_DataMap[x][y].val) tmp[m_DataMap[x][y].val - 1] = true;
+		}
+		std::vector<bool>::iterator tmpIt;
+		tmpIt = std::unique(tmp.begin(), tmp.end());
+		tmp.resize(std::distance(tmp.begin(), tmpIt));
+		if (!(tmp.size() == 1 && tmp[0] == true)) return;
+	}
+
+	for (unsigned int y = 0; y < GRID_COUNT_SINGLE; y++) {
+		std::vector<bool> tmp = { false, false, false, false, false, false, false, false, false };
+		for (unsigned int x = 0; x < GRID_COUNT_SINGLE; x++) {
+			if (m_DataMap[x / 3 + (y / 3) * 3][x % 3 + (y % 3) * 3].val) tmp[m_DataMap[x / 3 + (y / 3) * 3][x % 3 + (y % 3) * 3].val - 1] = true;
+		}
+		std::vector<bool>::iterator tmpIt;
+		tmpIt = std::unique(tmp.begin(), tmp.end());
+		tmp.resize(std::distance(tmp.begin(), tmpIt));
+		if (!(tmp.size() == 1 && tmp[0] == true)) return;
+	}
+
+	m_State.flagSuccess = 1;
+
+	if (m_State.flagSuccess) {
+		for (unsigned int y = 0; y < GRID_COUNT_SINGLE; y++)
+		{
+			for (unsigned int x = 0; x < GRID_COUNT_SINGLE; x++)
+			{
+				m_DataMap[y][x].locked = 1;
+			}
+		}
+	}
+}
+
 void Sudoku::Init()
 {
 	InitDataMap();
@@ -124,6 +204,7 @@ void Sudoku::Draw()
 	Flush();
 	RenderGrid();
 	RenderSpecialLine();
+	RenderWelcome();
 }
 
 void Sudoku::UpdateGridVal(SqureCell& cell)
@@ -158,6 +239,7 @@ void Sudoku::EventMouseListener(const ExMessage& msg)
 		unsigned int mayIdxY = msg.y / GRID_SIDE_LENGTH;
 		if (mayIdxX < GRID_COUNT_SINGLE && mayIdxY < GRID_COUNT_SINGLE) {
 			RenderGrid(mayIdxX, mayIdxY, COLOR_BG_GRID_HOVER);
+			RenderSpecialLine();
 			if (msg.message == WM_LBUTTONDOWN && Timer::Check(TIMER_GRID_CLICK_DURATION, TIMER_GRID_CLICK_CHAN)) {
 				UpdateGridVal(m_DataMap[mayIdxY][mayIdxX]);
 			}
@@ -167,14 +249,20 @@ void Sudoku::EventMouseListener(const ExMessage& msg)
 
 void Sudoku::Run()
 {
+	Checker();
 	ExMessage msg;
 	BeginBatchDraw();
 	while (m_State.process != ProcessFlags::PF_EXIT) {
 		Draw();
-		RenderWelcome();
 		peekmessage(&msg, EM_MOUSE);
 		EventMouseListener(msg);
+		RenderResultPanel();
+		if (m_State.process == ProcessFlags::PF_FINISH && Timer::Check(3000, 5)) {
+			m_State.process = ProcessFlags::PF_WELCOME;
+		}
 		FlushBatchDraw();
+		Checker();
+		
 	}
 	EndBatchDraw();
 }

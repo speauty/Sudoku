@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <algorithm>
 #include <easyx.h>
 #include "config.h"
 #include "Timer.hpp"
@@ -13,6 +14,7 @@ enum class ProcessFlags
 struct State
 {
 	ProcessFlags process = ProcessFlags::PF_EMPTY;
+	unsigned short flagSuccess = 0;
 };
 
 class Sudoku
@@ -31,7 +33,9 @@ private:
 	void RenderGridRect(const SqureCell& cell, unsigned int bgColor) const;
 	void RenderGridVal(const SqureCell& cell) const;
 	void RenderSpecialLine() const;
+	void RenderResultPanel();
 
+	void Checker();
 	void Init();
 	void Draw();
 	void UpdateGridVal(SqureCell& cell);
