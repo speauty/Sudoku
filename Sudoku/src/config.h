@@ -11,6 +11,7 @@ constexpr unsigned int COLOR_BG_GRID_HOVER = 0xe1f6e2;
 constexpr unsigned int COLOR_LINE_NORMAL = 0xd6d1d1;
 constexpr unsigned int COLOR_LINE_WEIGHT = 0xb0a7a7;
 constexpr unsigned int COLOR_TEXT = 0x292222;
+constexpr unsigned int COLOR_TEXT_BLOCK = 0xff006c;
 
 constexpr unsigned char TIMER_COUNT = 5;
 constexpr unsigned char TIMER_GRID_CLICK_CHAN = 0;

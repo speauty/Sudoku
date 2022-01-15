@@ -7,7 +7,7 @@
 
 enum class ProcessFlags
 {
-	PF_EMPTY = 0, PF_WELCOME = 1, PF_PLAY = 2, PF_FINISH = 3
+	PF_EMPTY = 0, PF_WELCOME = 1, PF_PLAY = 2, PF_FINISH = 3, PF_EXIT = 4
 };
 
 struct State
@@ -24,6 +24,8 @@ private:
 private:
 	void InitDataMap();
 	void Flush() const;
+	void SetGridTextStyle() const;
+	void RenderWelcome() const;
 	void RenderGrid() const;
 	void RenderGrid(unsigned char idxX, unsigned char idxY, unsigned int bgColor) const;
 	void RenderGridRect(const SqureCell& cell, unsigned int bgColor) const;
@@ -33,8 +35,8 @@ private:
 	void Init();
 	void Draw();
 	void UpdateGridVal(SqureCell& cell);
-	void Update();
-	void EventMouseListener(ExMessage msg);
+	void EventMouseListener(const ExMessage& msg);
+
 public:
 	Sudoku();
 	~Sudoku();
