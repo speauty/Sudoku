@@ -8,6 +8,8 @@ constexpr unsigned char GRID_NUM_MAX = 9;
 constexpr unsigned int COLOR_BG = 0xc8fbcb;
 constexpr unsigned int COLOR_BG_GRID_DEFAULT = 0xc8fbcb;
 constexpr unsigned int COLOR_BG_GRID_HOVER = 0xe1f6e2;
+constexpr unsigned int COLOR_BG_GRID_LOCK = 0xc8fbaa;
+;
 constexpr unsigned int COLOR_LINE_NORMAL = 0xd6d1d1;
 constexpr unsigned int COLOR_LINE_WEIGHT = 0xb0a7a7;
 constexpr unsigned int COLOR_TEXT = 0x292222;
@@ -36,5 +38,18 @@ struct SqureCell
 	unsigned int id;
 	PlaneCoordinate position;
 	unsigned short val;
+	bool locked;
+};
+
+static unsigned short SudokuTemplate[GRID_COUNT_SINGLE][GRID_COUNT_SINGLE] = {
+	{7, 0, 0, 0, 0, 0, 9, 0, 0},
+	{0, 1, 0, 3, 0, 0, 5, 0, 0},
+	{0, 3, 8, 9, 0, 0, 2, 0, 1},
+	{2, 0, 3, 0, 4, 8, 6, 0, 0},
+	{0, 0, 0, 0, 0, 0, 0, 0, 0},
+	{0, 0, 6, 2, 9, 0, 4, 0, 3},
+	{3, 0, 1, 0, 0, 6, 8, 9, 0},
+	{0, 0, 2, 0, 0, 3, 0, 5, 0},
+	{0, 0, 7, 0, 0, 0, 0, 0, 6},
 };
 

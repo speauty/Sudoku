@@ -6,7 +6,7 @@ void Sudoku::InitDataMap()
 	{
 		for (unsigned int x = 0; x < GRID_COUNT_SINGLE; x++)
 		{
-			m_DataMap[y][x] = { x + y * GRID_COUNT_SINGLE, {x * GRID_SIDE_LENGTH, y * GRID_SIDE_LENGTH}, 0 };
+			m_DataMap[y][x] = { x + y * GRID_COUNT_SINGLE, {x * GRID_SIDE_LENGTH, y * GRID_SIDE_LENGTH}, SudokuTemplate[y][x], SudokuTemplate[y][x] != 0};
 		}
 	}
 }
@@ -74,14 +74,19 @@ void Sudoku::RenderGridRect(const SqureCell& cell, unsigned int bgColor) const
 {
 	setlinecolor(COLOR_LINE_NORMAL);
 	setfillcolor(bgColor);
+
+	if (cell.locked && m_State.process == ProcessFlags::PF_PLAY) {
+		setfillcolor(COLOR_BG_GRID_LOCK);
+	}
 	fillrectangle(cell.position.AxisX, cell.position.AxisY, cell.position.AxisX + GRID_SIZE, cell.position.AxisY + GRID_SIZE);
 }
 
 void Sudoku::RenderGridVal(const SqureCell& cell) const
 {
-	if (!cell.val) return;
-	WCHAR tmp[2];
-	swprintf_s(tmp, _T("%d"), cell.val);
+	if (m_State.process != ProcessFlags::PF_PLAY) return;
+	SetGridTextStyle();
+	WCHAR tmp[2] = _T("");
+	if (cell.val) swprintf_s(tmp, _T("%d"), cell.val);
 	outtextxy(cell.position.AxisX + (GRID_SIZE - 20) / 2, cell.position.AxisY + (GRID_SIZE - 40) / 2, tmp);
 
 }
@@ -123,12 +128,12 @@ void Sudoku::Draw()
 
 void Sudoku::UpdateGridVal(SqureCell& cell)
 {
-	if (cell.val == 0) return;
+	if (cell.locked) return;
 	if (cell.val < GRID_NUM_MAX) {
 		cell.val++;
 	}
 	else {
-		cell.val = 1;
+		cell.val = 0;
 	}
 }
 
