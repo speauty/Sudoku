@@ -1,21 +1,42 @@
 #pragma once
+
 #include <iostream>
-#include <array>
-#include "easyx.h"
+#include <easyx.h>
 #include "config.h"
 #include "Timer.hpp"
-#include "Widget/Win.h"
-#include "Widget/SquareGrid.h"
+
+enum class ProcessFlags
+{
+	PF_EMPTY = 0, PF_WELCOME = 1, PF_PLAY = 2, PF_FINISH = 3
+};
+
+struct State
+{
+	ProcessFlags process = ProcessFlags::PF_EMPTY;
+};
 
 class Sudoku
 {
 private:
-	Win* m_WinControl;
-	SquareGrid* m_DataMap[GRID_COUNT_SINGLE][GRID_COUNT_SINGLE];
+	State m_State;
+	SqureCell m_DataMap[GRID_COUNT_SINGLE][GRID_COUNT_SINGLE];
+
+private:
+	void InitDataMap();
+	void Flush() const;
+	void RenderGrid() const;
+	void RenderGrid(unsigned char idxX, unsigned char idxY, unsigned int bgColor) const;
+	void RenderGridRect(const SqureCell& cell, unsigned int bgColor) const;
+	void RenderGridVal(const SqureCell& cell) const;
+	void RenderSpecialLine() const;
+
+	void Init();
+	void Draw();
+	void UpdateGridVal(SqureCell& cell);
+	void Update();
+	void EventMouseListener(ExMessage msg);
 public:
 	Sudoku();
 	~Sudoku();
-	void Init();
-	void Update();
 	void Run();
 };

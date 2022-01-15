@@ -18,12 +18,6 @@
     <ClCompile Include="src\Application.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Widget\Win.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Widget\SquareGrid.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\Sudoku.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -31,12 +25,6 @@
   <ItemGroup>
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Widget\Win.h">
-      <Filter>源文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Widget\SquareGrid.h">
-      <Filter>源文件</Filter>
     </ClInclude>
     <ClInclude Include="src\Timer.hpp">
       <Filter>源文件</Filter>
